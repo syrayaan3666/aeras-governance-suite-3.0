@@ -146,15 +146,15 @@ export function CaseDetailView({ caseData }: CaseDetailViewProps) {
 
         <TabsContent value="overview" className="mt-0 space-y-6 p-6">
           {/* Agentforce Case Assistant */}
-          <div className="p-5 bg-blue-50/50 border border-blue-200/50 rounded-xl">
+          <div className="p-5 bg-card border border-border/20 rounded-xl shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <Bot className="w-5 h-5 text-blue-600" />
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-blue-700">
+              <Bot className="w-5 h-5 text-primary" />
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-primary">
                 Agentforce Case Assistant
               </h4>
             </div>
             
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-foreground mb-4">
               Generate an Agentforce insight to summarize case risk, SLA pressure, and recommended next action.
             </p>
             
@@ -162,18 +162,18 @@ export function CaseDetailView({ caseData }: CaseDetailViewProps) {
               onClick={handleGenerate}
               disabled={loading}
               variant="outline"
-              className="w-full gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+              className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/5"
             >
               <Sparkles className="w-4 h-4" />
               Generate Insight
             </Button>
 
             {loading ? (
-              <p className="text-xs text-muted-foreground mt-2 text-center">Generating insight…</p>
+              <p className="text-sm text-foreground mt-2 text-center">Generating insight…</p>
             ) : insightText ? (
-              <p className="text-sm text-muted-foreground mt-2">{insightText}</p>
+              <p className="text-sm text-foreground mt-2">{insightText}</p>
             ) : (
-              <p className="text-xs text-muted-foreground mt-2 text-center">Coming soon - Agentforce integration</p>
+              <p className="text-sm text-muted-foreground mt-2 text-center">Coming soon - Agentforce integration</p>
             )}
           </div>
 
