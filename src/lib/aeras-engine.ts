@@ -33,10 +33,14 @@ export type ExceptionType =
   | 'POLICY_DEVIATION_REQUEST';
 
 export type CaseStatus = 
-  | 'New'
-  | 'In Review'
-  | 'Escalated'
-  | 'Resolved';
+  | 'SYSTEM_INITIATED'
+  | 'PENDING_REVIEW'
+  | 'UNDER_EVALUATION'
+  | 'ESCALATED'
+  | 'SLA_BREACHED'
+  | 'APPROVED'
+  | 'DENIED'
+  | 'CLOSED';
 
 export type RiskCategory = 
   | 'COMPLIANCE'

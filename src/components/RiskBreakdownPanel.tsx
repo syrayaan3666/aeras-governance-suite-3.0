@@ -16,6 +16,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 interface RiskBreakdownPanelProps {
   caseData: AcademicException | null;
@@ -139,7 +145,13 @@ export function RiskBreakdownPanel({ caseData }: RiskBreakdownPanelProps) {
         </div>
       </div>
 
-      {/* Risk Dimensions */}
+      {/* Risk Breakdown Accordion */}
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="risk-breakdown">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <span className="text-sm font-medium">View Risk Breakdown</span>
+          </AccordionTrigger>
+          <AccordionContent className="px-0 pb-0">
       <div className="p-4 space-y-4">
         <TooltipProvider>
           {riskDimensions.map((dimension, index) => {
@@ -290,6 +302,9 @@ export function RiskBreakdownPanel({ caseData }: RiskBreakdownPanelProps) {
           </span>
         </div>
       </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </motion.div>
   );
 }
