@@ -10,6 +10,7 @@ import {
   Bot,
   Sparkles
 } from 'lucide-react';
+import { useState } from 'react';
 import { AcademicException, EXCEPTION_TYPE_LABELS, STATUS_LABELS, DECISION_AUTHORITY_LABELS, maskStudentId } from '@/lib/aeras-engine';
 import { RiskScoreGauge } from './RiskScoreGauge';
 import { SLATimer } from './SLATimer';
@@ -19,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { generateAgentInsight } from '@/lib/agentforce';
 
 interface CaseDetailViewProps {
   caseData: AcademicException | null;
@@ -52,6 +54,30 @@ export function CaseDetailView({ caseData }: CaseDetailViewProps) {
     APPROVED: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     DENIED: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
     CLOSED: 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+  };
+
+  const [loading, setLoading] = useState(false);
+  const [insightText, setInsightText] = useState<string | null>(null);
+
+  const handleGenerate = () => {
+    setLoading(true);
+    try {
+      const slaMinutesRemaining = Math.max(0, Math.floor((caseData.slaDeadline.getTime() - Date.now()) / 60000));
+      const recentAuditActions = caseData.auditTrail.map((e) => e.action);
+
+      const caseContext = {
+        title: caseData.caseNumber,
+        status: caseData.status,
+        slaMinutesRemaining,
+        riskScore: caseData.riskScore,
+        recentAuditActions
+      };
+
+      const insight = generateAgentInsight(caseContext);
+      setInsightText(insight);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -132,18 +158,23 @@ export function CaseDetailView({ caseData }: CaseDetailViewProps) {
               Generate an Agentforce insight to summarize case risk, SLA pressure, and recommended next action.
             </p>
             
-            <Button 
-              disabled
+            <Button
+              onClick={handleGenerate}
+              disabled={loading}
               variant="outline"
               className="w-full gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
             >
               <Sparkles className="w-4 h-4" />
               Generate Insight
             </Button>
-            
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Coming soon - Agentforce integration
-            </p>
+
+            {loading ? (
+              <p className="text-xs text-muted-foreground mt-2 text-center">Generating insight…</p>
+            ) : insightText ? (
+              <p className="text-sm text-muted-foreground mt-2">{insightText}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground mt-2 text-center">Coming soon - Agentforce integration</p>
+            )}
           </div>
 
           {/* Audit Trail */}
