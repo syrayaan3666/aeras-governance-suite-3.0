@@ -7,7 +7,8 @@ import {
   Shield,
   FileWarning,
   Scale,
-  LayoutDashboard
+  LayoutDashboard,
+  ChevronDown
 } from 'lucide-react';
 import { ServiceConsoleSidebar } from '@/components/ServiceConsoleSidebar';
 import { ConsoleHeader } from '@/components/ConsoleHeader';
@@ -22,8 +23,9 @@ import { getAcademicExceptions, getDashboardMetrics } from '@/lib/mock-data';
 import { AcademicException } from '@/lib/aeras-engine';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { loginToSalesforce, updateRecord, createRecord, createSampleData } from '@/lib/salesforce';
+import { loginToSalesforce, updateRecord, createRecord, createSampleData, createGovernanceLog } from '@/lib/salesforce';
 
 const Index = () => {
   const [selectedCase, setSelectedCase] = useState<AcademicException | null>(null);
@@ -34,6 +36,7 @@ const Index = () => {
   const [cases, setCases] = useState<AcademicException[]>([]);
   const [metrics, setMetrics] = useState<any>({});
   const [loading, setLoading] = useState(true);
+  const [advancedInsightsOpen, setAdvancedInsightsOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -75,12 +78,7 @@ const Index = () => {
       await updateRecord('Academic_Exception_c__c', caseId, { Status_c__c: newStatus });
 
       // Create governance log
-      await createRecord('Governance_Log__c', {
-        Case_c__c: caseId,
-        Action_Type_c__c: action.toUpperCase(),
-        New_Status_c__c: newStatus,
-        Actor_c__c: 'Current User' // Replace with actual user
-      });
+      await createGovernanceLog(caseId, action, newStatus);
 
       // Refresh data
       const [updatedCases, updatedMetrics] = await Promise.all([
@@ -191,11 +189,29 @@ const Index = () => {
         />
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <GovernanceFeed />
-        <PatternDetection />
-      </div>
+      {/* Advanced Insights - Collapsible */}
+      <Collapsible open={advancedInsightsOpen} onOpenChange={setAdvancedInsightsOpen}>
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold">Advanced Insights</h3>
+          </div>
+          <motion.div
+            animate={{ rotate: advancedInsightsOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+          </motion.div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent className="space-y-6 mt-4">
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            <GovernanceFeed />
+            <PatternDetection />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
         </>
       )}
     </div>
@@ -224,14 +240,14 @@ const Index = () => {
 
       <ResizableHandle withHandle />
 
-      {/* Right Panel - Quick Actions / Risk Breakdown */}
+      {/* Right Panel - Quick Actions / Risk Indicator */}
       <ResizablePanel defaultSize={25} minSize={20} maxSize={35}>
         <div className="h-full flex flex-col bg-card">
           {/* Panel Tabs */}
           <Tabs value={rightPanel} onValueChange={(v) => setRightPanel(v as 'actions' | 'risk')}>
             <TabsList className="mx-4 mt-4 justify-start bg-muted/30">
               <TabsTrigger value="actions" className="text-xs">Quick Actions</TabsTrigger>
-              <TabsTrigger value="risk" className="text-xs">Risk Breakdown</TabsTrigger>
+              <TabsTrigger value="risk" className="text-xs">Risk Indicator</TabsTrigger>
             </TabsList>
 
             <TabsContent value="actions" className="flex-1 m-0">

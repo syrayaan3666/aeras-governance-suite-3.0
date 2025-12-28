@@ -9,6 +9,14 @@ const PASSWORD = import.meta.env.VITE_SF_PASSWORD + (import.meta.env.VITE_SF_SEC
 let accessToken: string | null = null;
 let instanceUrl: string | null = null;
 
+// Mapping for Governance_Log__c Action_Type__c restricted picklist values
+const ACTION_TYPE_MAP: Record<string, string> = {
+  REQUEST_INFO: 'Update',
+  APPROVE: 'Approve',
+  DENY: 'Deny',
+  ESCALATE: 'Escalate',
+};
+
 // Login to Salesforce and get access token
 export const loginToSalesforce = async (): Promise<void> => {
   const response = await fetch(`${SF_LOGIN_URL}/services/oauth2/token`, {
@@ -94,6 +102,18 @@ export const updateRecord = async (objectName: string, id: string, data: any): P
   return sfApiCall(`/services/data/${API_VERSION}/sobjects/${objectName}/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(data),
+  });
+};
+
+// Create governance log record with action type mapping
+export const createGovernanceLog = async (caseId: string, actionType: string, newStatus: string, actor: string = 'Current User'): Promise<any> => {
+  const mappedActionType = ACTION_TYPE_MAP[actionType.toUpperCase()] || 'Update'; // Default to 'Update' if mapping not found
+  
+  return createRecord('Governance_Log__c', {
+    Case_c__c: caseId,
+    Action_Type_c__c: mappedActionType,
+    New_Status_c__c: newStatus,
+    Actor_c__c: actor
   });
 };
 

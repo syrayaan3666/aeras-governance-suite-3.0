@@ -75,7 +75,7 @@ export function RiskBreakdownPanel({ caseData }: RiskBreakdownPanelProps) {
     return (
       <div className="p-4 h-full flex items-center justify-center">
         <p className="text-sm text-muted-foreground text-center">
-          Select a case to view risk breakdown
+          Select a case to view risk indicator
         </p>
       </div>
     );

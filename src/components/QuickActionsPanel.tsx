@@ -39,7 +39,7 @@ export function QuickActionsPanel({ caseData, onAction }: QuickActionsPanelProps
       approve: 'Approved',
       deny: 'Denied',
       escalate: 'Escalated',
-      request_info: 'Information Requested'
+      request_info: 'Case Information Requested'
     };
     
     toast.success(`Case ${caseData.caseNumber} ${actionLabels[action]}`, {
@@ -142,7 +142,7 @@ export function QuickActionsPanel({ caseData, onAction }: QuickActionsPanelProps
                 className="gap-2"
               >
                 <MessageSquare className="w-4 h-4" />
-                Request Info
+                Update Case
               </Button>
             </div>
 
@@ -189,7 +189,7 @@ export function QuickActionsPanel({ caseData, onAction }: QuickActionsPanelProps
               Case is {caseData.status.toLowerCase()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              No actions available
+              No quick actions available
             </p>
           </div>
         )}

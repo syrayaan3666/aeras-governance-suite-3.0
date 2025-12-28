@@ -6,7 +6,9 @@ import {
   User, 
   ExternalLink,
   Cpu,
-  FileText
+  FileText,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import { AcademicException, EXCEPTION_TYPE_LABELS, STATUS_LABELS, DECISION_AUTHORITY_LABELS, maskStudentId } from '@/lib/aeras-engine';
 import { RiskScoreGauge } from './RiskScoreGauge';
@@ -157,6 +159,33 @@ export function CaseDetailView({ caseData }: CaseDetailViewProps) {
                   <p className="font-mono font-semibold">{caseData.escalationLevel}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Agentforce Case Assistant */}
+            <div className="p-5 bg-blue-50/50 border border-blue-200/50 rounded-xl">
+              <div className="flex items-center gap-2 mb-4">
+                <Bot className="w-5 h-5 text-blue-600" />
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-blue-700">
+                  Agentforce Case Assistant
+                </h4>
+              </div>
+              
+              <p className="text-sm text-muted-foreground mb-4">
+                Generate an Agentforce insight to summarize case risk, SLA pressure, and recommended next action.
+              </p>
+              
+              <Button 
+                disabled
+                variant="outline"
+                className="w-full gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <Sparkles className="w-4 h-4" />
+                Generate Insight
+              </Button>
+              
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Coming soon - Agentforce integration
+              </p>
             </div>
 
             {/* Timestamps */}
