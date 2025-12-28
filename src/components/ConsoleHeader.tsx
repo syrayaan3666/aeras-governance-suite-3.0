@@ -23,6 +23,19 @@ export function ConsoleHeader({ className }: ConsoleHeaderProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Logo */}
+      <div className="flex items-center gap-3 mr-4">
+        <img 
+          src="/logo.png" 
+          alt="AERAS Governance Suite" 
+          className="h-12 w-auto"
+        />
+        <div className="hidden sm:block">
+          <h1 className="text-lg font-semibold text-primary">AERAS</h1>
+          <p className="text-xs text-muted-foreground">Governance Suite</p>
+        </div>
+      </div>
+
       {/* Search */}
       <div className="flex-1 max-w-xl">
         <div className="relative">
