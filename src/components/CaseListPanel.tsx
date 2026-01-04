@@ -65,14 +65,10 @@ export function CaseListPanel({
   };
 
   const statusColors: Record<string, string> = {
-    SYSTEM_INITIATED: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    PENDING_REVIEW: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    UNDER_EVALUATION: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-    ESCALATED: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-    SLA_BREACHED: 'bg-red-500/20 text-red-400 border-red-500/30',
-    APPROVED: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    DENIED: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
-    CLOSED: 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+    'New': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    'In Review': 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    'Escalated': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+    'Resolved': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
   };
 
   return (

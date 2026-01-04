@@ -1,5 +1,10 @@
 // AERAS Core Engine - Academic Exception Risk & Accountability System
 // Enterprise Governance Logic Layer
+//
+// IMPORTANT: Business rules, escalation, and audit logging
+// are enforced by Salesforce record-triggered Flows.
+// This code provides calculations for UI rendering and visualization only.
+// No automation or enforcement logic should exist in the frontend.
 
 export interface AcademicException {
   id: string;
@@ -21,6 +26,7 @@ export interface AcademicException {
   escalationLevel: number;
   slaBreach: boolean;
   grievanceProbability: number;
+  denialReason?: string; // New field for denial rationale
 }
 
 export type ExceptionType = 
@@ -33,14 +39,10 @@ export type ExceptionType =
   | 'POLICY_DEVIATION_REQUEST';
 
 export type CaseStatus = 
-  | 'SYSTEM_INITIATED'
-  | 'PENDING_REVIEW'
-  | 'UNDER_EVALUATION'
-  | 'ESCALATED'
-  | 'SLA_BREACHED'
-  | 'APPROVED'
-  | 'DENIED'
-  | 'CLOSED';
+  | 'New'
+  | 'In Review'
+  | 'Escalated'
+  | 'Resolved';
 
 export type RiskCategory = 
   | 'COMPLIANCE'
@@ -85,6 +87,8 @@ export type GovernanceEventType =
   | 'RISK_RECALCULATED';
 
 // Risk Score Calculation Engine
+// NOTE: This provides risk visualization for the UI only.
+// Actual risk-based automation is handled by Salesforce Flow triggers.
 export function calculateInstitutionalRiskScore(
   policyDeviationSeverity: number, // 0-25
   historicalPatternRisk: number,    // 0-25
@@ -122,6 +126,8 @@ export function getSLATimeRemaining(deadline: Date): {
   isBreached: boolean;
   isWarning: boolean;
 } {
+  // NOTE: SLA calculations are for UI display only.
+  // SLA enforcement and breach handling is managed by Salesforce Flow.
   const now = new Date();
   const diff = deadline.getTime() - now.getTime();
   const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -158,14 +164,10 @@ export const EXCEPTION_TYPE_LABELS: Record<ExceptionType, string> = {
 };
 
 export const STATUS_LABELS: Record<CaseStatus, string> = {
-  SYSTEM_INITIATED: 'System Initiated',
-  PENDING_REVIEW: 'Pending Review',
-  UNDER_EVALUATION: 'Under Evaluation',
-  ESCALATED: 'Escalated',
-  APPROVED: 'Approved',
-  DENIED: 'Denied',
-  SLA_BREACHED: 'SLA Breached',
-  CLOSED: 'Closed'
+  'New': 'New',
+  'In Review': 'In Review',
+  'Escalated': 'Escalated',
+  'Resolved': 'Resolved'
 };
 
 export const DECISION_AUTHORITY_LABELS: Record<DecisionAuthority, string> = {

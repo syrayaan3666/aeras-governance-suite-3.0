@@ -1,6 +1,8 @@
 /**
  * Agentforce Insight Generator
  * Pure utility for generating deterministic case insights
+ * Business rules and automation are handled by Salesforce Flow.
+ * This provides assistive insights only.
  */
 
 export interface CaseContext {
@@ -23,22 +25,22 @@ export function generateAgentInsight(caseContext: CaseContext): string {
   // Determine if risk is high (above 70%)
   const isRiskHigh = riskValue > 70;
 
-  // Generate insight based on conditions
+  // Generate insight based on conditions - purely assistive, no action recommendations
   if (isSlaCritical || isRiskHigh) {
     if (isSlaCritical && isRiskHigh) {
-      return `This ${title} case is approaching SLA breach with high risk score of ${riskValue}. Recommended next step: immediately request additional information or escalate to supervisor for urgent review.`;
+      return `This ${title} case requires attention: SLA deadline approaching with elevated risk score of ${riskValue}. Salesforce Flow will handle any necessary escalation based on configured business rules.`;
     } else if (isSlaCritical) {
-      return `This ${title} case has only ${slaMinutesRemaining} minutes remaining before SLA breach. Recommended next step: request additional information or escalate to meet the deadline.`;
+      return `This ${title} case has ${slaMinutesRemaining} minutes remaining before SLA deadline. Salesforce Flow monitors this automatically and will trigger appropriate actions if configured.`;
     } else {
-      return `This ${title} case shows elevated risk with a score of ${riskValue}. Recommended next step: gather more information or escalate for specialized review.`;
+      return `This ${title} case shows elevated risk with a score of ${riskValue}. Risk thresholds are monitored by Salesforce Flow for automated responses.`;
     }
   } else {
-    // Normal case - recommend monitoring or routine update
+    // Normal case - provide status awareness
     const hasRecentActivity = recentAuditActions.length > 0;
     if (hasRecentActivity) {
-      return `This ${title} case is progressing normally with ${slaMinutesRemaining} minutes remaining on SLA. Recommended next step: continue monitoring or update case status as appropriate.`;
+      return `This ${title} case is progressing normally with ${slaMinutesRemaining} minutes remaining on SLA. Recent activity has been logged by Salesforce Flow.`;
     } else {
-      return `This ${title} case is in ${status} status with adequate time remaining. Recommended next step: review recent activity or update case documentation.`;
+      return `This ${title} case is in ${status} status with adequate time remaining. All governance events are automatically tracked by Salesforce Flow.`;
     }
   }
 }

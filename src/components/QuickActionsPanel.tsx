@@ -29,6 +29,14 @@ export function QuickActionsPanel({ caseData, onAction }: QuickActionsPanelProps
   const handleAction = async (action: string) => {
     if (!caseData) return;
     
+    // Validate denial reason is provided
+    if (action === 'deny' && !notes.trim()) {
+      toast.error('Denial reason required', {
+        description: 'Please provide a detailed reason for denying this case'
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
@@ -67,7 +75,7 @@ export function QuickActionsPanel({ caseData, onAction }: QuickActionsPanelProps
     );
   }
 
-  const isClosed = ['APPROVED', 'DENIED', 'CLOSED'].includes(caseData.status);
+  const isClosed = caseData.status === 'Resolved';
 
   return (
     <motion.div

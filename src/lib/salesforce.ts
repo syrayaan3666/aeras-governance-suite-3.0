@@ -1,4 +1,10 @@
 // Salesforce REST API utilities for browser compatibility
+//
+// ARCHITECTURE NOTE: This module now handles UI intent signaling only.
+// Business rules, escalation logic, and audit logging are enforced
+// by Salesforce record-triggered Flows. The UI expresses user intent
+// and renders the outcomes determined by Flow automation.
+
 const SF_LOGIN_URL = '/api/sf';
 const API_VERSION = 'v58.0';
 const CLIENT_ID = import.meta.env.VITE_SF_CLIENT_ID;
@@ -105,17 +111,28 @@ export const updateRecord = async (objectName: string, id: string, data: any): P
   });
 };
 
-// Create governance log record with action type mapping
-export const createGovernanceLog = async (caseId: string, actionType: string, newStatus: string, actor: string = 'Current User'): Promise<any> => {
-  const mappedActionType = ACTION_TYPE_MAP[actionType.toUpperCase()] || 'Update'; // Default to 'Update' if mapping not found
+// Governance logging is handled by Salesforce record-triggered Flows
+// Removed: createGovernanceLog function - no longer needed in UI code
+
+// DEPRECATED: This function has been removed as governance logging
+// is now handled automatically by Salesforce Flow triggers
+// export const createGovernanceLog = async (caseId: string, actionType: string, newStatus: string, actor: string = 'Current User', details?: string): Promise<any> => {
+//   const mappedActionType = ACTION_TYPE_MAP[actionType.toUpperCase()] || 'Update'; // Default to 'Update' if mapping not found
+//   
+//   const logData: any = {
+//     Case_c__c: caseId,
+//     Action_Type_c__c: mappedActionType,
+//     New_Status_c__c: newStatus,
+//     Actor_c__c: actor
+//   };
+
+//   // Add details for denial actions
+//   if (actionType.toLowerCase() === 'deny' && details) {
+//     logData.Details_c__c = details;
+//   }
   
-  return createRecord('Governance_Log__c', {
-    Case_c__c: caseId,
-    Action_Type_c__c: mappedActionType,
-    New_Status_c__c: newStatus,
-    Actor_c__c: actor
-  });
-};
+//   return createRecord('Governance_Log__c', logData);
+// };
 
 // Create sample data
 export const createSampleData = async (): Promise<void> => {

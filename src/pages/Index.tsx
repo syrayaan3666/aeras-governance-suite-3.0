@@ -25,7 +25,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { loginToSalesforce, updateRecord, createRecord, createSampleData, createGovernanceLog } from '@/lib/salesforce';
+import { loginToSalesforce, updateRecord, createRecord, createSampleData } from '@/lib/salesforce';
 
 const Index = () => {
   const [selectedCase, setSelectedCase] = useState<AcademicException | null>(null);
@@ -59,26 +59,33 @@ const Index = () => {
 
   const handleCaseAction = async (action: string, caseId: string, notes?: string) => {
     try {
-      // Update case status in Salesforce
-      let newStatus: string;
-      switch (action) {
-        case 'approve':
-          newStatus = 'Resolved';
-          break;
-        case 'deny':
-          newStatus = 'Resolved';
-          break;
-        case 'escalate':
-          newStatus = 'Escalated';
-          break;
-        default:
-          newStatus = 'In Review';
+      // Business rules, escalation, and audit logging
+      // are enforced by Salesforce record-triggered Flows.
+      // This UI only signals intent and renders outcomes.
+
+      // Status__c is a restricted Salesforce picklist.
+      // UI actions are mapped to valid lifecycle states before API calls.
+      const STATUS_MAP = {
+        approve: 'Resolved',
+        deny: 'Resolved',
+        escalate: 'Escalated',
+        request_info: 'In Review'
+      } as const;
+
+      // Update case status in Salesforce (intent only)
+      const nextStatus = STATUS_MAP[action as keyof typeof STATUS_MAP] || 'In Review';
+      let updateData: any = {};
+
+      // Handle denial reason storage
+      if (action === 'deny') {
+        updateData.Denial_Reason__c = notes; // Store denial reason
       }
 
-      await updateRecord('Academic_Exception_c__c', caseId, { Status_c__c: newStatus });
+      updateData.Status_c__c = nextStatus;
+      await updateRecord('Academic_Exception_c__c', caseId, updateData);
 
-      // Create governance log
-      await createGovernanceLog(caseId, action, newStatus);
+      // Governance logging is handled by Salesforce Flow
+      // Removed: await createGovernanceLog(caseId, action, newStatus, 'Current User', governanceDetails);
 
       // Refresh data
       const [updatedCases, updatedMetrics] = await Promise.all([
